@@ -1,0 +1,24 @@
+VAGRANTFILE_API_VERSION = ("2") 
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  #box setting 
+  config.vm.box = "intellyzen/devops-test"
+  #provider setting
+  config.vm.box_url = ["https://s3.ap-south-1.amazonaws.com/intellyzen-test/devops-test.box"] 
+ # vb.memory = "2048"
+  # vb.cpus = 4
+   #end
+
+  #network setting
+  config.vm.network :forwarded_port, guest: 80, host: 8080, id: "nginx"   # Nginx HTTP
+  config.vm.network :forwarded_port, guest: 443, host: 8443   # Nginx HTTPS
+  config.vm.network :forwarded_port, guest: 5000, host: 5000  # Flask debug server
+
+  #folder setting
+  config.vm.synced_folder ".", "/var/www/html", :nfs => { :mount_options => ["dmode=777","fmode=666"] }
+
+  #probision setting
+ # config.vm.provision "file", source: "files/site.conf", destination: "/tmp/site.conf"
+   config.vm.provision "shell", path: "files/provision.sh"
+    
+end
